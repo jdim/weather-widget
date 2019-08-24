@@ -1,15 +1,10 @@
 import { combineReducers } from 'redux';
 import { FETCH_FAILURE } from '../constants/actionTypes';
-import selectedStatusTab from './selectedStatusTab';
 import currentWeather from './currentWeather';
 import { reducer as modal } from 'redux-modal';
 
 const entities = combineReducers({
   currentWeather
-});
-
-const ui = combineReducers({
-  selectedStatusTab
 });
 
 function errorMessage(state = null, { type, error }) {
@@ -23,7 +18,6 @@ function errorMessage(state = null, { type, error }) {
 
 const rootReducer = combineReducers({
   entities,
-  ui,
   errorMessage,
   modal
 });

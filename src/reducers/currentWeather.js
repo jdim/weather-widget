@@ -73,9 +73,8 @@ export default combineReducers({
 
 /* SELECTORS */
 
-export function getItems(state) {
+export function getItems(state, selectedStatus) {
   const { currentWeather: entity } = state.entities;
-  const selectedStatus = state.ui.selectedStatusTab;
   return entity.allIds
     .map(id => entity.byId[id])
     .filter(

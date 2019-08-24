@@ -55,11 +55,12 @@ function TempTable({ rows, rowRender }) {
 }
 
 TempTable.propTypes = {
-  rows: PropTypes.array.isRequired
+  rows: PropTypes.array.isRequired,
+  selectedStatus: PropTypes.string.isRequired
 };
 
-const mapStateToProps = state => ({
-  rows: getItems(state)
+const mapStateToProps = (state, ownProps) => ({
+  rows: getItems(state, ownProps.selectedStatus)
 });
 
 export default connect(

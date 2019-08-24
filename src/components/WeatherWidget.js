@@ -15,11 +15,13 @@ const useStyles = makeStyles(theme => ({
 
 function WeatherWidget(props) {
   const classes = useStyles();
+  const { params } = props.match;
+
   return (
     <Paper className={classes.root}>
       <AddCity />
-      <EntryStatusTabs />
-      <TempTable />
+      <EntryStatusTabs current={params.selectedStatus} />
+      <TempTable selectedStatus={params.selectedStatus} />
     </Paper>
   );
 }

@@ -1,3 +1,3 @@
-export const ALL = 0;
-export const ACTIVE = 1;
-export const DELETED = 2;
+export const ALL = 'all';
+export const ACTIVE = 'active';
+export const DELETED = 'deleted';
