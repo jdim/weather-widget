@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
 import { fetchCurrentWeather } from '../actions/currentWeather';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { getIsFetching } from '../reducers/currentWeather';
+import { getIsFetching, getErrorMessage } from '../reducers/currentWeather';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -35,22 +35,24 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function AddCity({ onClickAdd, isFetching }) {
+function AddCity({ onClickAdd, isFetching, errorMessage }) {
   const classes = useStyles();
 
   const [name, setName] = useState('');
-  const [error, setError] = useState('');
+  const [localError, setLocalError] = useState('');
 
   function handleClickAdd(ev) {
     ev.preventDefault();
     if (!name.length) {
-      setError("City name can't be empty, please fill the field");
+      setLocalError("City name can't be empty, please fill the field");
       return;
     }
     onClickAdd(name);
     setName('');
-    setError('');
+    setLocalError('');
   }
+
+  const error = localError || errorMessage;
 
   return (
     <form
@@ -91,11 +93,13 @@ function AddCity({ onClickAdd, isFetching }) {
 
 AddCity.propTypes = {
   onClickAdd: PropTypes.func,
-  isFetching: PropTypes.bool
+  isFetching: PropTypes.bool,
+  errorMessage: PropTypes.string
 };
 
 const MapStateToProps = state => ({
-  isFetching: getIsFetching(state)
+  isFetching: getIsFetching(state),
+  errorMessage: getErrorMessage(state)
 });
 
 const mapDispatchToProps = {

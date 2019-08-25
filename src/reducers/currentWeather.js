@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import {
   REQUEST_CURRENT_WEATHER,
   RECEIVE_CURRENT_WEATHER,
+  FAILURE_CURRENT_WEATHER,
   UPDATE_CURRENT_WEATHER_ENTRY,
   MOVE_CURRENT_WEATHER
 } from '../constants/actionTypes';
@@ -11,6 +12,9 @@ import { UP, DOWN } from '../constants/moveDirections';
 
 function insertItem(state, action) {
   const { data: newItem } = action;
+  if (state.hasOwnProperty(newItem.id)) {
+    return { ...state };
+  }
   return { ...state, [newItem.id]: { ...newItem } };
 }
 
@@ -20,6 +24,10 @@ function updateItem(state, action) {
 }
 
 function insertItemId(state, action) {
+  const newId = action.data.id;
+  if (state.indexOf(newId) > -1) {
+    return [...state];
+  }
   return [...state, action.data.id];
 }
 
@@ -62,13 +70,25 @@ const allIds = createReducer([], {
 
 const isFetching = createReducer(false, {
   [REQUEST_CURRENT_WEATHER]: () => true,
-  [RECEIVE_CURRENT_WEATHER]: () => false
+  [RECEIVE_CURRENT_WEATHER]: () => false,
+  [FAILURE_CURRENT_WEATHER]: () => false
 });
+
+const error = createReducer(null, {
+  [FAILURE_CURRENT_WEATHER]: getError,
+  [REQUEST_CURRENT_WEATHER]: () => null,
+  [RECEIVE_CURRENT_WEATHER]: () => null
+});
+
+function getError(state, { error }) {
+  return error;
+}
 
 export default combineReducers({
   byId,
   allIds,
-  isFetching
+  isFetching,
+  error
 });
 
 /* SELECTORS */
@@ -88,4 +108,9 @@ export function getIsFetching(state) {
 
 export function getById(state, id) {
   return state.entities.currentWeather.byId[id];
+}
+
+export function getErrorMessage(state) {
+  const { error } = state.entities.currentWeather;
+  return error ? error.message : '';
 }
