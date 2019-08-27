@@ -46,8 +46,6 @@ function AddCity({ addCurWeather, isFetching, errorMessage }) {
   );
 
   function handleCityStateChange(changes) {
-    console.log(changes);
-
     if (changes.hasOwnProperty('selectedItem')) {
       setAutocompleteCityState({
         inputValue: changes.selectedItem.name,
