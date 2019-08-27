@@ -1,12 +1,30 @@
 .App {
-  padding: 2rem;
   box-sizing: border-box;
   background-color: #66bb6a;
   min-height: 100vh;
   overflow: hidden;
-  color: whitesmoke;
+  color: white;
+}
+
+.App-Container {
+  margin: 2rem;
 }
 
 .App-Header {
   font-weight: 400;
+}
+
+.App-Github {
+  color: black;
+}
+
+.App-GithubLink {
+  color: black;
+}
+
+.App-GithubImg {
+  width: 22px;
+  height: 22px;
+  position: relative;
+  top: 4px;
 }
