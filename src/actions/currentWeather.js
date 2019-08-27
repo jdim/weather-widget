@@ -7,7 +7,7 @@ import {
 } from '../constants/actionTypes';
 import { errorPayload } from './helpers';
 
-import { getByCityName } from '../api/currentWeather';
+import { getByCity } from '../api/currentWeatherApi';
 import { getById } from '../reducers/currentWeather';
 
 function requestCurrentWeather() {
@@ -44,10 +44,10 @@ function failureCurrentWeather(error) {
   };
 }
 
-export function fetchCurrentWeather(city) {
+export function fetchCurrentWeather(id, name) {
   return function(dispatch) {
     dispatch(requestCurrentWeather());
-    getByCityName(city)
+    getByCity(id, name)
       .then(data => dispatch(receiveCurrentWeather(data)))
       .catch(err => dispatch(failureCurrentWeather(err)));
   };

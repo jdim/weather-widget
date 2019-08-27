@@ -1,9 +1,11 @@
 import { combineReducers } from 'redux';
 import currentWeather from './currentWeather';
 import { reducer as modal } from 'redux-modal';
+import cities from './cities';
 
 const entities = combineReducers({
-  currentWeather
+  currentWeather,
+  cities
 });
 
 const rootReducer = combineReducers({

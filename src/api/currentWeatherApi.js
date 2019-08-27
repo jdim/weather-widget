@@ -1,9 +1,17 @@
 import { ACTIVE } from '../constants/entriesStatuses';
 import { errorPayload } from '../actions/helpers';
 
-export function getByCityName(cityName) {
+export function getByCity(id, name) {
+  let queryParams = '';
+  if (id) {
+    queryParams = `id=${id}`;
+  } else if (name) {
+    queryParams = `q=${name}`;
+  } else {
+    throw new Error('Must supply name or id of the city');
+  }
   return fetch(
-    `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=f02d635f892fac9d584b06a155ac9a60`
+    `https://api.openweathermap.org/data/2.5/weather?${queryParams}&units=metric&appid=f02d635f892fac9d584b06a155ac9a60`
   ).then(response =>
     response.json().then(json => {
       if (!response.ok) {
@@ -11,7 +19,7 @@ export function getByCityName(cityName) {
         let message = '';
 
         if (code === 404) {
-          message = `City with name ${cityName} not found`;
+          message = `City with name ${name} not found`;
         }
 
         return Promise.reject(
@@ -19,7 +27,7 @@ export function getByCityName(cityName) {
             code,
             message,
             fromApi: true,
-            cityName,
+            name,
             origin: json
           })
         );

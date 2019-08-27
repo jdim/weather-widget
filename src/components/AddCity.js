@@ -1,27 +1,25 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import Input from '@material-ui/core/Input';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
 import { fetchCurrentWeather } from '../actions/currentWeather';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { getIsFetching, getErrorMessage } from '../reducers/currentWeather';
+import AutocompleteCity from './AutocompleteCity';
 
 const useStyles = makeStyles(theme => ({
   container: {
     display: 'flex',
     flexWrap: 'wrap',
-    alignItems: 'baseline',
     marginBottom: theme.spacing(2)
   },
   input: {
     minWidth: '260px'
   },
   button: {
-    marginLeft: theme.spacing(2)
+    marginLeft: theme.spacing(2),
+    marginTop: theme.spacing(2)
   },
   buttonProgress: {
     position: 'absolute',
@@ -35,20 +33,50 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function AddCity({ onClickAdd, isFetching, errorMessage }) {
+function AddCity({ addCurWeather, isFetching, errorMessage }) {
   const classes = useStyles();
-
-  const [name, setName] = useState('');
   const [localError, setLocalError] = useState('');
+
+  const initialAutocompleteCityState = {
+    selectedItem: null,
+    inputValue: ''
+  };
+  const [autocompleteCityState, setAutocompleteCityState] = useState(
+    initialAutocompleteCityState
+  );
+
+  function handleCityStateChange(changes) {
+    console.log(changes);
+
+    if (changes.hasOwnProperty('selectedItem')) {
+      setAutocompleteCityState({
+        inputValue: changes.selectedItem.name,
+        selectedItem: { ...changes.selectedItem }
+      });
+    } else if (changes.hasOwnProperty('inputValue')) {
+      setAutocompleteCityState({
+        selectedItem: null,
+        inputValue: changes.inputValue
+      });
+    }
+  }
 
   function handleClickAdd(ev) {
     ev.preventDefault();
-    if (!name.length) {
+
+    const { selectedItem, inputValue } = autocompleteCityState;
+    if (inputValue.length === 0) {
       setLocalError("City name can't be empty, please fill the field");
       return;
     }
-    onClickAdd(name);
-    setName('');
+
+    const id =
+      selectedItem && selectedItem.name === inputValue ? selectedItem.id : null;
+    const name = inputValue;
+
+    addCurWeather(id, name);
+
+    setAutocompleteCityState({ ...initialAutocompleteCityState });
     setLocalError('');
   }
 
@@ -61,18 +89,13 @@ function AddCity({ onClickAdd, isFetching, errorMessage }) {
       autoComplete="off"
       onSubmit={handleClickAdd}
     >
-      <FormControl error={!!error}>
-        <Input
-          className={classes.input}
-          id="component-error"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          aria-describedby="component-error-text"
-          placeholder="Moscow"
-          required={true}
-        />
-        <FormHelperText id="component-error-text">{error}</FormHelperText>
-      </FormControl>
+      <AutocompleteCity
+        errorMessage={error}
+        onStateChange={handleCityStateChange}
+        selectedItem={autocompleteCityState.selectedItem}
+        inputValue={autocompleteCityState.inputValue}
+      />
+
       <div className={classes.wrapper}>
         <Button
           variant="contained"
@@ -92,7 +115,7 @@ function AddCity({ onClickAdd, isFetching, errorMessage }) {
 }
 
 AddCity.propTypes = {
-  onClickAdd: PropTypes.func,
+  addCurWeather: PropTypes.func,
   isFetching: PropTypes.bool,
   errorMessage: PropTypes.string
 };
@@ -103,7 +126,7 @@ const MapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  onClickAdd: fetchCurrentWeather
+  addCurWeather: fetchCurrentWeather
 };
 
 export default connect(
